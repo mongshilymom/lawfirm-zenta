@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --color-background: #0f1316;
+  --color-surface: #14181c;
+  --color-foreground: #e9e4da;
+  --color-accent: #d4b07a;
+}
+
+* {
+  scrollbar-color: var(--color-accent) var(--color-surface);
+}
+
+body {
+  @apply bg-ink text-parchment font-serif antialiased min-h-screen;
+}
+
+a {
+  @apply text-brass underline-offset-4 transition-colors duration-200;
+}
+
+a:hover,
+a:focus-visible {
+  @apply text-parchment;
+}
+
+main {
+  @apply bg-hero-linear bg-no-repeat;
+}
