@@ -12,25 +12,25 @@ export default function LawyerDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    async function loadLawyer() {
+      try {
+        const { data, error } = await supabase
+          .from("lawyers")
+          .select("*")
+          .eq("id", params.id)
+          .single();
+
+        if (error) throw error;
+        setLawyer(data);
+      } catch (error) {
+        console.error("변호사 정보 로드 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     loadLawyer();
   }, [params.id]);
-
-  async function loadLawyer() {
-    try {
-      const { data, error } = await supabase
-        .from("lawyers")
-        .select("*")
-        .eq("id", params.id)
-        .single();
-
-      if (error) throw error;
-      setLawyer(data);
-    } catch (error) {
-      console.error("변호사 정보 로드 실패:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   if (loading) {
     return (

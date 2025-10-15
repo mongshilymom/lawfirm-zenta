@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
 
 interface Consultation {
@@ -30,11 +30,7 @@ export default function AdminConsultationsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
 
-  useEffect(() => {
-    loadData();
-  }, [filter]);
-
-  async function loadData() {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
       // 상담 내역 로드
@@ -65,7 +61,11 @@ export default function AdminConsultationsPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [filter]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   async function updateStatus(id: string, newStatus: string) {
     const { error } = await supabase
