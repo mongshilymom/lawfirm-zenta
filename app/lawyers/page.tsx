@@ -27,7 +27,7 @@ function extractUniqueValues<T extends Record<string, any>>(
   items.forEach((item) => {
     const value = item[key];
     if (Array.isArray(value)) {
-      value.forEach((v) => values.add(String(v)));
+      value.forEach((v: any) => values.add(String(v)));
     } else if (value) {
       values.add(String(value));
     }
@@ -38,8 +38,8 @@ function extractUniqueValues<T extends Record<string, any>>(
 export default async function LawyersPage() {
   const lawyers = await getLawyersData();
   
-  const availableSpecialties = extractUniqueValues(lawyers, "practice_areas");
-  const availableRoles = extractUniqueValues(lawyers, "role");
+  const availableSpecialties = extractUniqueValues(lawyers as any, "practice_areas");
+  const availableRoles = extractUniqueValues(lawyers as any, "role");
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -54,7 +54,7 @@ export default async function LawyersPage() {
 
       <Suspense fallback={<div className="text-center py-12">Loading lawyers...</div>}>
         <LawyerDirectoryClient
-          initialLawyers={lawyers}
+          initialLawyers={lawyers as any}
           availableSpecialties={availableSpecialties}
           availableRoles={availableRoles}
         />

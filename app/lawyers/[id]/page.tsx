@@ -21,7 +21,7 @@ export default function LawyerDetailPage() {
           .single();
 
         if (error) throw error;
-        setLawyer(data);
+        setLawyer(data as any);
       } catch (error) {
         console.error("변호사 정보 로드 실패:", error);
       } finally {

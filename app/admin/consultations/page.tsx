@@ -15,7 +15,7 @@ interface Consultation {
   created_at: string;
   assigned_lawyer?: {
     name: string;
-  } | null;
+  }[] | null;
 }
 
 interface Lawyer {

@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         consultation_type: consultationType,
         message: message || "",
         status: "pending",
-      })
+      } as any)
       .select()
       .single();
 
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
           phone,
           consultation_type: consultationType,
           message: message || "내용 없음",
-          created_at: contact.created_at,
+          created_at: (contact as any)?.created_at,
         },
       }),
     }).catch((error) => console.warn("Email notification failed:", error));

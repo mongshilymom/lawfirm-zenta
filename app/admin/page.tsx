@@ -1,19 +1,22 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import Link from "next/link";
+import type { Database } from "@/lib/supabase/types";
 
-async function getConsultations() {
+type Consultation = Database["public"]["Tables"]["consultations"]["Row"];
+
+async function getConsultations(): Promise<Consultation[]> {
   const supabase = createServerSupabase();
   const { data, error } = await supabase
     .from("consultations")
     .select("*")
     .order("created_at", { ascending: false })
     .limit(50);
-  
+
   if (error) {
     console.error("Failed to load consultations:", error);
     return [];
   }
-  return data || [];
+  return (data as unknown as Consultation[]) || [];
 }
 
 export default async function AdminConsultationsPage() {
@@ -67,8 +70,8 @@ export default async function AdminConsultationsPage() {
                     {new Date(consultation.created_at).toLocaleString("ko-KR")}
                   </td>
                   <td className="px-6 py-4">
-                    <Link 
-                      href={`/admin/consultations/${consultation.id}`}
+                    <Link
+                      href={`/admin/consultations/${consultation.id}` as any}
                       className="text-amber-500 hover:text-amber-400 text-sm font-medium"
                     >
                       상세보기
