@@ -30,17 +30,12 @@ export async function POST(request: NextRequest) {
     const { data: consultation, error: consultationError } = await supabase
       .from("consultations")
       .insert({
-        name: name,
-        email: email,
-        phone: phone,
-        case_type: legalIssue,
-        description: legalIssue,
         visitor_name: name,
         visitor_email: email,
         visitor_phone: phone,
         legal_issue: legalIssue,
         status: "active",
-      } as any)
+      })
       .select()
       .single();
 
@@ -55,14 +50,14 @@ export async function POST(request: NextRequest) {
     // 2. 대화 메시지 저장 (있는 경우)
     if (messages && messages.length > 0 && consultation) {
       const messageRecords = messages.map((msg) => ({
-        consultation_id: (consultation as any).id,
+        consultation_id: consultation.id,
         role: msg.role,
         content: msg.content,
       }));
 
       const { error: messagesError } = await supabase
         .from("chat_messages")
-        .insert(messageRecords as any);
+        .insert(messageRecords);
 
       if (messagesError) {
         console.error("Failed to save messages:", messagesError);
@@ -77,10 +72,10 @@ export async function POST(request: NextRequest) {
       phone,
       message: legalIssue,
       source: "ai_chat",
-    } as any);
+    });
 
     return NextResponse.json({
-      consultationId: (consultation as any)?.id,
+      consultationId: consultation?.id,
       message: "Consultation created successfully",
     });
   } catch (error) {

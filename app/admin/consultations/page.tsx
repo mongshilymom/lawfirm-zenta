@@ -5,14 +5,14 @@ import { supabase } from "@/lib/supabase/client";
 
 interface Consultation {
   id: string;
-  name: string;
-  email: string;
-  phone: string;
-  case_type: string;
-  description: string;
-  status: string;
+  visitor_name: string;
+  visitor_email: string;
+  visitor_phone: string;
+  legal_issue: string;
+  status: string | null;
   assigned_lawyer_id: string | null;
   created_at: string;
+  updated_at: string;
   assigned_lawyer?: {
     name: string;
   }[] | null;
@@ -21,7 +21,8 @@ interface Consultation {
 interface Lawyer {
   id: string;
   name: string;
-  specialty: string;
+  role: string;
+  practice_areas: string[];
 }
 
 export default function AdminConsultationsPage() {
@@ -51,7 +52,7 @@ export default function AdminConsultationsPage() {
       // 변호사 목록 로드
       const { data: lawyersData } = await supabase
         .from("lawyers")
-        .select("id, name, specialty")
+        .select("id, name, role, practice_areas")
         .order("name");
 
       setConsultations(consultationsData || []);
@@ -102,10 +103,11 @@ export default function AdminConsultationsPage() {
           body: JSON.stringify({
             type: "lawyer_assigned",
             data: {
-              client_email: consultation.email,
-              client_name: consultation.name,
+              client_email: consultation.visitor_email,
+              client_name: consultation.visitor_name,
               lawyer_name: lawyer.name,
-              lawyer_specialty: lawyer.specialty,
+              lawyer_role: lawyer.role,
+              lawyer_practice_areas: lawyer.practice_areas.join(", "),
             },
           }),
         }).catch((error) => console.warn("Email notification failed:", error));
@@ -184,11 +186,11 @@ export default function AdminConsultationsPage() {
                   {/* 상담자 정보 */}
                   <div>
                     <h3 className="font-bold text-lg mb-2">
-                      {consultation.name}
+                      {consultation.visitor_name}
                     </h3>
                     <div className="space-y-1 text-sm text-gray-600">
-                      <p>📧 {consultation.email}</p>
-                      <p>📞 {consultation.phone}</p>
+                      <p>📧 {consultation.visitor_email}</p>
+                      <p>📞 {consultation.visitor_phone}</p>
                       <p className="text-xs text-gray-400 mt-2">
                         {new Date(consultation.created_at).toLocaleString("ko-KR")}
                       </p>
@@ -199,11 +201,11 @@ export default function AdminConsultationsPage() {
                   <div>
                     <div className="mb-2">
                       <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
-                        {consultation.case_type}
+                        법률 상담
                       </span>
                     </div>
                     <p className="text-sm text-gray-700 line-clamp-3">
-                      {consultation.description}
+                      {consultation.legal_issue}
                     </p>
                   </div>
 
@@ -215,7 +217,7 @@ export default function AdminConsultationsPage() {
                         상태
                       </label>
                       <select
-                        value={consultation.status}
+                        value={consultation.status || "pending"}
                         onChange={(e) =>
                           updateStatus(consultation.id, e.target.value)
                         }
@@ -244,7 +246,7 @@ export default function AdminConsultationsPage() {
                         <option value="">미배정</option>
                         {lawyers.map((lawyer) => (
                           <option key={lawyer.id} value={lawyer.id}>
-                            {lawyer.name} ({lawyer.specialty})
+                            {lawyer.name} ({lawyer.role} - {lawyer.practice_areas.join(", ")})
                           </option>
                         ))}
                       </select>
@@ -254,10 +256,10 @@ export default function AdminConsultationsPage() {
                     <div className="pt-2">
                       <span
                         className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                          statusColors[consultation.status]
+                          statusColors[consultation.status || "pending"]
                         }`}
                       >
-                        {statusLabels[consultation.status]}
+                        {statusLabels[consultation.status || "pending"]}
                       </span>
                     </div>
                   </div>

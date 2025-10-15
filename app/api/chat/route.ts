@@ -44,7 +44,7 @@ async function saveMessageToSupabase(
     },
   ];
 
-  const { error } = await supabase.from("chat_messages").insert(messages as any);
+  const { error } = await supabase.from("chat_messages").insert(messages);
 
   if (error) {
     console.error("Failed to save messages to DB:", error);
