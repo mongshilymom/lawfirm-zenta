@@ -1,100 +1,192 @@
-import { createServerSupabase } from "@/lib/supabase/server";
 import Link from "next/link";
-import type { Database } from "@/lib/supabase/types";
+import { createAdminSupabase } from "@/lib/supabase/admin";
+import { 
+  FileText, 
+  Image as ImageIcon, 
+  HelpCircle, 
+  FolderOpen, 
+  Bell,
+  TrendingUp 
+} from "lucide-react";
 
-type Consultation = Database["public"]["Tables"]["consultations"]["Row"];
-
-async function getConsultations(): Promise<Consultation[]> {
-  const supabase = createServerSupabase();
-  const { data, error } = await supabase
-    .from("consultations")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(50);
-
-  if (error) {
-    console.error("Failed to load consultations:", error);
-    return [];
-  }
-  return (data as unknown as Consultation[]) || [];
+interface DashboardStats {
+  draftsCount: number;
+  publishedCount: number;
+  faqsCount: number;
+  categoriesCount: number;
+  imagesCount: number;
+  activeAnnouncements: number;
 }
 
-export default async function AdminConsultationsPage() {
-  const consultations = await getConsultations();
+async function getDashboardStats(): Promise<DashboardStats> {
+  const supabase = createAdminSupabase();
+
+  const { data, error } = await supabase
+    .from("admin_stats")
+    .select("*")
+    .single();
+
+  if (error || !data) {
+    return {
+      draftsCount: 0,
+      publishedCount: 0,
+      faqsCount: 0,
+      categoriesCount: 0,
+      imagesCount: 0,
+      activeAnnouncements: 0,
+    };
+  }
+
+  return {
+    draftsCount: data.drafts_count || 0,
+    publishedCount: data.published_count || 0,
+    faqsCount: data.faqs_count || 0,
+    categoriesCount: data.categories_count || 0,
+    imagesCount: data.images_count || 0,
+    activeAnnouncements: data.active_announcements || 0,
+  };
+}
+
+export default async function AdminDashboard() {
+  const stats = await getDashboardStats();
+
+  const cards = [
+    {
+      title: "Posts",
+      icon: FileText,
+      stats: [
+        { label: "Published", value: stats.publishedCount },
+        { label: "Drafts", value: stats.draftsCount },
+      ],
+      href: "/admin/posts",
+      color: "blue",
+    },
+    {
+      title: "Images",
+      icon: ImageIcon,
+      stats: [{ label: "Total", value: stats.imagesCount }],
+      href: "/admin/images",
+      color: "purple",
+    },
+    {
+      title: "FAQs",
+      icon: HelpCircle,
+      stats: [{ label: "Total", value: stats.faqsCount }],
+      href: "/admin/faqs",
+      color: "green",
+    },
+    {
+      title: "Categories",
+      icon: FolderOpen,
+      stats: [{ label: "Total", value: stats.categoriesCount }],
+      href: "/admin/categories",
+      color: "yellow",
+    },
+    {
+      title: "Announcements",
+      icon: Bell,
+      stats: [{ label: "Active", value: stats.activeAnnouncements }],
+      href: "/admin/announcements",
+      color: "red",
+    },
+  ];
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-parchment mb-2">상담 관리</h1>
-        <p className="text-slate-400">AI 챗 상담 신청 내역을 확인하고 관리합니다</p>
-      </header>
-
-      <div className="rounded-xl border border-slate-800 bg-slate-950/50 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-slate-900 border-b border-slate-800">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">이름</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">연락처</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">상담 분야</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">상태</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">신청일시</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">액션</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800">
-            {consultations.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                  아직 상담 신청 내역이 없습니다
-                </td>
-              </tr>
-            ) : (
-              consultations.map((consultation) => (
-                <tr key={consultation.id} className="hover:bg-slate-900/50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-parchment">{consultation.visitor_name || "-"}</td>
-                  <td className="px-6 py-4 text-sm text-slate-300">
-                    {consultation.visitor_email && <div>{consultation.visitor_email}</div>}
-                    {consultation.visitor_phone && <div className="text-slate-400">{consultation.visitor_phone}</div>}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-300">{consultation.legal_issue || "-"}</td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                      consultation.status === "active" ? "bg-green-500/10 text-green-500" :
-                      consultation.status === "assigned" ? "bg-blue-500/10 text-blue-500" :
-                      "bg-slate-500/10 text-slate-400"
-                    }`}>
-                      {consultation.status === "active" ? "진행중" : consultation.status === "assigned" ? "배정됨" : "완료"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-400">
-                    {new Date(consultation.created_at).toLocaleString("ko-KR")}
-                  </td>
-                  <td className="px-6 py-4">
-                    <Link
-                      href={`/admin/consultations/${consultation.id}` as any}
-                      className="text-amber-500 hover:text-amber-400 text-sm font-medium"
-                    >
-                      상세보기
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-serif font-bold text-[--color-ink]">
+          Admin Dashboard
+        </h1>
+        <p className="mt-2 text-[--color-pewter]">
+          Manage your website content
+        </p>
       </div>
 
-      <div className="mt-8 flex items-center justify-between">
-        <div className="text-sm text-slate-400">
-          총 {consultations.length}건의 상담 신청
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Link
+              key={card.title}
+              href={card.href}
+              className="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {card.title}
+                  </h3>
+                  <div className="mt-3 space-y-1">
+                    {card.stats.map((stat) => (
+                      <div key={stat.label} className="flex items-baseline gap-2">
+                        <span className="text-2xl font-bold text-gray-900">
+                          {stat.value}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          {stat.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className={`p-3 rounded-lg bg-${card.color}-50`}>
+                  <Icon className={`w-6 h-6 text-${card.color}-600`} />
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Quick Actions
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link
+            href="/admin/posts/new"
+            className="flex items-center gap-3 p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
+          >
+            <FileText className="w-5 h-5 text-blue-600" />
+            <span className="font-medium text-blue-900">Create New Post</span>
+          </Link>
+          <Link
+            href="/admin/images"
+            className="flex items-center gap-3 p-4 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors"
+          >
+            <ImageIcon className="w-5 h-5 text-purple-600" />
+            <span className="font-medium text-purple-900">Upload Images</span>
+          </Link>
+          <Link
+            href="/admin/faqs/new"
+            className="flex items-center gap-3 p-4 rounded-lg bg-green-50 hover:bg-green-100 transition-colors"
+          >
+            <HelpCircle className="w-5 h-5 text-green-600" />
+            <span className="font-medium text-green-900">Add FAQ</span>
+          </Link>
         </div>
-        <Link 
-          href="/"
-          className="text-amber-500 hover:text-amber-400 text-sm font-medium"
-        >
-          ← 홈으로 돌아가기
-        </Link>
       </div>
-    </main>
+
+      {/* Recent Activity */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Recent Activity
+          </h2>
+          <Link
+            href="/admin/audit-logs"
+            className="text-sm text-blue-600 hover:text-blue-700"
+          >
+            View All →
+          </Link>
+        </div>
+        <div className="text-sm text-gray-500">
+          Activity log will appear here...
+        </div>
+      </div>
+    </div>
   );
 }
