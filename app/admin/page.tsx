@@ -1,190 +1,113 @@
 import Link from "next/link";
-import { createAdminSupabase } from "@/lib/supabase/admin";
-import { 
-  FileText, 
-  Image as ImageIcon, 
-  HelpCircle, 
-  FolderOpen, 
-  Bell,
-  TrendingUp 
-} from "lucide-react";
-
-interface DashboardStats {
-  draftsCount: number;
-  publishedCount: number;
-  faqsCount: number;
-  categoriesCount: number;
-  imagesCount: number;
-  activeAnnouncements: number;
-}
-
-async function getDashboardStats(): Promise<DashboardStats> {
-  const supabase = createAdminSupabase();
-
-  const { data, error } = await supabase
-    .from("admin_stats")
-    .select("*")
-    .single();
-
-  if (error || !data) {
-    return {
-      draftsCount: 0,
-      publishedCount: 0,
-      faqsCount: 0,
-      categoriesCount: 0,
-      imagesCount: 0,
-      activeAnnouncements: 0,
-    };
-  }
-
-  return {
-    draftsCount: data.drafts_count || 0,
-    publishedCount: data.published_count || 0,
-    faqsCount: data.faqs_count || 0,
-    categoriesCount: data.categories_count || 0,
-    imagesCount: data.images_count || 0,
-    activeAnnouncements: data.active_announcements || 0,
-  };
-}
+import { redirect } from "next/navigation";
+import { createServerSupabase } from "@/lib/supabase/server";
+import { getAdminSession } from "@/lib/auth/session";
+import StatsDashboard from "@/components/admin/StatsDashboard";
 
 export default async function AdminDashboard() {
-  const stats = await getDashboardStats();
+  // ✅ 인증 체크 - 로그인 안 되어 있으면 로그인 페이지로
+  const session = await getAdminSession();
+  if (!session) {
+    redirect("/admin/login");
+  }
 
-  const cards = [
+  const supabase = createServerSupabase();
+
+  // Get counts
+  const [lawyersRes, casesRes, faqsRes, contactsRes] = await Promise.all([
+    supabase.from("lawyers").select("id", { count: "exact", head: true }),
+    supabase.from("case_studies").select("id", { count: "exact", head: true }),
+    supabase.from("faqs").select("id", { count: "exact", head: true }),
+    supabase.from("consultations").select("id", { count: "exact", head: true }),
+  ]);
+
+  const stats = [
     {
-      title: "Posts",
-      icon: FileText,
-      stats: [
-        { label: "Published", value: stats.publishedCount },
-        { label: "Drafts", value: stats.draftsCount },
-      ],
-      href: "/admin/posts",
-      color: "blue",
+      name: "Lawyers",
+      count: lawyersRes.count || 0,
+      href: "/admin/lawyers",
+      icon: "👔",
+      color: "bg-blue-500",
     },
     {
-      title: "Images",
-      icon: ImageIcon,
-      stats: [{ label: "Total", value: stats.imagesCount }],
-      href: "/admin/images",
-      color: "purple",
+      name: "Case Studies",
+      count: casesRes.count || 0,
+      href: "/admin/cases",
+      icon: "📋",
+      color: "bg-green-500",
     },
     {
-      title: "FAQs",
-      icon: HelpCircle,
-      stats: [{ label: "Total", value: stats.faqsCount }],
+      name: "FAQs",
+      count: faqsRes.count || 0,
       href: "/admin/faqs",
-      color: "green",
+      icon: "❓",
+      color: "bg-yellow-500",
     },
     {
-      title: "Categories",
-      icon: FolderOpen,
-      stats: [{ label: "Total", value: stats.categoriesCount }],
-      href: "/admin/categories",
-      color: "yellow",
-    },
-    {
-      title: "Announcements",
-      icon: Bell,
-      stats: [{ label: "Active", value: stats.activeAnnouncements }],
-      href: "/admin/announcements",
-      color: "red",
+      name: "Consultations",
+      count: contactsRes.count || 0,
+      href: "/admin/consultations",
+      icon: "💬",
+      color: "bg-purple-500",
     },
   ];
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-serif font-bold text-[--color-ink]">
-          Admin Dashboard
-        </h1>
-        <p className="mt-2 text-[--color-pewter]">
-          Manage your website content
-        </p>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        <p className="mt-2 text-gray-600">Manage your law firm website content</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cards.map((card) => {
-          const Icon = card.icon;
-          return (
-            <Link
-              key={card.title}
-              href={card.href}
-              className="block p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {card.title}
-                  </h3>
-                  <div className="mt-3 space-y-1">
-                    {card.stats.map((stat) => (
-                      <div key={stat.label} className="flex items-baseline gap-2">
-                        <span className="text-2xl font-bold text-gray-900">
-                          {stat.value}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {stat.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className={`p-3 rounded-lg bg-${card.color}-50`}>
-                  <Icon className={`w-6 h-6 text-${card.color}-600`} />
-                </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {stats.map((stat) => (
+          <Link
+            key={stat.name}
+            href={stat.href}
+            className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stat.count}</p>
               </div>
-            </Link>
-          );
-        })}
+              <div className={`${stat.color} text-white text-3xl p-3 rounded-full`}>
+                {stat.icon}
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* 📊 통계 대시보드 추가 */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">📊 통계 대시보드</h2>
+        <StatsDashboard />
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Quick Actions
-        </h2>
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
-            href="/admin/posts/new"
-            className="flex items-center gap-3 p-4 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
+            href="/admin/lawyers/new"
+            className="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
-            <FileText className="w-5 h-5 text-blue-600" />
-            <span className="font-medium text-blue-900">Create New Post</span>
+            <span className="mr-2">➕</span> Add New Lawyer
           </Link>
           <Link
-            href="/admin/images"
-            className="flex items-center gap-3 p-4 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors"
+            href="/admin/cases/new"
+            className="flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
           >
-            <ImageIcon className="w-5 h-5 text-purple-600" />
-            <span className="font-medium text-purple-900">Upload Images</span>
+            <span className="mr-2">➕</span> Add Case Study
           </Link>
           <Link
             href="/admin/faqs/new"
-            className="flex items-center gap-3 p-4 rounded-lg bg-green-50 hover:bg-green-100 transition-colors"
+            className="flex items-center justify-center px-4 py-3 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors"
           >
-            <HelpCircle className="w-5 h-5 text-green-600" />
-            <span className="font-medium text-green-900">Add FAQ</span>
+            <span className="mr-2">➕</span> Add FAQ
           </Link>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Recent Activity
-          </h2>
-          <Link
-            href="/admin/audit-logs"
-            className="text-sm text-blue-600 hover:text-blue-700"
-          >
-            View All →
-          </Link>
-        </div>
-        <div className="text-sm text-gray-500">
-          Activity log will appear here...
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getAdminSession } from "@/lib/auth/session";
 import AdminNav from "@/components/admin/AdminNav";
 
@@ -7,13 +6,19 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // ✅ Middleware에서 이미 체크하지만, 세션 정보는 필요
   const session = await getAdminSession();
 
-  // Redirect to login if not admin
+  // ✅ 로그인 페이지는 네비게이션 없이 렌더링
   if (!session) {
-    redirect("/admin/login");
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {children}
+      </div>
+    );
   }
 
+  // ✅ 로그인된 경우: 네비게이션 포함
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Admin Navigation */}
