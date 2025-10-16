@@ -3,6 +3,8 @@ import { EB_Garamond } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/sections/Header";
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
+import Footer from "@/components/sections/Footer"; // ✅ 푸터 추가
+import LetYouBadge from "@/components/LetYouBadge";
 
 const garamond = EB_Garamond({
   subsets: ["latin"],
@@ -77,10 +79,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <OrganizationSchema />
       </head>
       <body className="bg-ink text-parchment">
+        <LetYouBadge />
         <Header />
-        <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6">
+        <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 pb-24">
           {children}
         </div>
+        <Footer /> {/* ✅ 푸터 추가 */}
       </body>
     </html>
   );
