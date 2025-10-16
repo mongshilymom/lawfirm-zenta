@@ -1,4 +1,4 @@
-# Template Law Firm Architecture Blueprint
+# ZENTA Law Firm Architecture Blueprint
 
 ## Vision Alignment
 - **Trust-Centered Dark Academia Experience**: Establish a design system anchored in deep slate palettes, serif typography, and tactile textures to project authority and transparency.
