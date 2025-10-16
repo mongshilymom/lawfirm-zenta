@@ -1,7 +1,7 @@
 {
-  "name": "zenta-lawfirm-template",
+  "name": "zenta-lawfirm-website",
   "version": "1.0.0",
-  "description": "Premium AI-first law firm website template - Commercial ready",
+  "description": "ZENTA LawFirm WebSite - Premium AI-first law firm website solution - Commercial ready",
   "private": true,
   "scripts": {
     "dev": "next dev",

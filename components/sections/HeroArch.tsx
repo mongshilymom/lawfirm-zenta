@@ -84,7 +84,7 @@ export default function HeroArch() {
             Build Trust with <span className="text-brass">AI-First</span> Law Firm Architecture
           </h1>
           <p className="max-w-2xl text-pretty text-lg text-zinc-300 md:text-xl">
-            Premium digital experience template connecting legal professionals and real-time insights in just 3 clicks. Ready to customize for your law firm.
+            Premium digital experience connecting legal professionals and real-time insights in just 3 clicks. Ready to customize for your law firm.
           </p>
           
           <div className="flex flex-wrap items-center justify-center gap-4">

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "Terms of service for Zenta law firm website template"
+  description: "Terms of service for ZENTA LawFirm WebSite"
 };
 
 export default function TermsPage() {

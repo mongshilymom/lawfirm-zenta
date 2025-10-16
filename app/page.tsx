@@ -14,7 +14,7 @@ export default function HomePage() {
     name: "Zenta Law",
     url: process.env.NEXT_PUBLIC_BASE_URL || "https://youalta.net",
     logo: `${process.env.NEXT_PUBLIC_BASE_URL || "https://youalta.net"}/logo.svg`,
-    description: "Premium AI-first law firm website template for modern legal professionals",
+    description: "Premium AI-first law firm website for modern legal professionals",
     sameAs: ["https://youalta.net"],
     areaServed: "Worldwide",
     priceRange: "$$$",

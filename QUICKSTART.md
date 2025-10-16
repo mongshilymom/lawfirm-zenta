@@ -2,7 +2,7 @@
 
 ## 📦 1단계: 의존성 설치 (1분)
 ```bash
-cd C:\Users\mongshilymom\dev\letyou\templates\template-lawfirm-zenta
+cd C:\Users\mongshilymom\dev\letyou\zenta-lawfirm
 npm install
 ```
 

@@ -30,8 +30,8 @@
 ## What's Covered
 
 ### ✅ Included in Support:
-- Template setup and installation help
-- Bug fixes for core template features
+- ZENTA setup and installation help
+- Bug fixes for core ZENTA features
 - Guidance on basic customization
 - Deployment assistance
 - Database schema questions
@@ -130,10 +130,10 @@ When contacting support, include:
 - **Duration**: 12 months from purchase date
 - **Type**: Email support
 - **Response Time**: Within 48 business hours
-- **Coverage**: Template bugs and setup assistance
+- **Coverage**: ZENTA bugs and setup assistance
 
 After support period expires:
-- Template continues to work
+- ZENTA continues to work
 - Documentation remains accessible
 - Extended support available for purchase
 
@@ -155,7 +155,7 @@ After support period expires:
 
 ## Reporting Bugs
 
-If you find a bug in the template:
+If you find a bug in ZENTA:
 
 1. Email: support@youalta.net
 2. Subject: "Bug Report: [Brief Description]"
