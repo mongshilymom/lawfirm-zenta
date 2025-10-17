@@ -64,7 +64,7 @@ export default async function AdminDashboard() {
         {stats.map((stat) => (
           <Link
             key={stat.name}
-            href={stat.href}
+            href={stat.href as any}
             className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6"
           >
             <div className="flex items-center justify-between">
