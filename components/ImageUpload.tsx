@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
-import { Upload, Image as ImageIcon, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2 } from "lucide-react";
 
 interface ImageUploadProps {
   onImageUploaded: (url: string) => void;
@@ -24,14 +25,12 @@ export default function ImageUpload({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 파일 크기 체크
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
     if (file.size > maxSizeBytes) {
       setError(`파일 크기는 ${maxSizeMB}MB 이하여야 합니다.`);
       return;
     }
 
-    // 이미지 파일 체크
     if (!file.type.startsWith("image/")) {
       setError("이미지 파일만 업로드 가능합니다.");
       return;
@@ -45,32 +44,23 @@ export default function ImageUpload({
   const uploadImage = async (file: File) => {
     setUploading(true);
     try {
-      // 파일명 생성 (타임스탬프 + 랜덤)
       const fileExt = file.name.split(".").pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      // Supabase Storage에 업로드
-      const { data, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from(bucket)
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+        .upload(filePath, file, { cacheControl: "3600", upsert: false });
 
       if (uploadError) throw uploadError;
 
-      // Public URL 가져오기
       const {
         data: { publicUrl },
       } = supabase.storage.from(bucket).getPublicUrl(filePath);
 
       onImageUploaded(publicUrl);
-      
-      // 성공 메시지 (선택적)
-      setTimeout(() => {
-        setPreview(null);
-      }, 2000);
+
+      setTimeout(() => setPreview(null), 2000);
     } catch (error: any) {
       console.error("Upload error:", error);
       setError(error.message || "업로드 실패");
@@ -82,9 +72,7 @@ export default function ImageUpload({
   const clearPreview = () => {
     setPreview(null);
     setError(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
@@ -101,7 +89,7 @@ export default function ImageUpload({
       <label
         htmlFor="image-upload"
         className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white 
-                   rounded-md hover:bg-blue-700 transition cursor-pointer text-sm"
+                 rounded-md hover:bg-blue-700 transition cursor-pointer text-sm"
       >
         {uploading ? (
           <>
@@ -124,11 +112,16 @@ export default function ImageUpload({
 
       {preview && (
         <div className="relative">
-          <img
-            src={preview}
-            alt="Preview"
-            className="w-full max-w-xs h-auto rounded border"
-          />
+          <div className="relative w-full max-w-xs h-56 rounded border overflow-hidden">
+            <Image
+              src={preview}
+              alt="Preview"
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, 320px"
+              unoptimized
+            />
+          </div>
           <button
             onClick={clearPreview}
             className="absolute top-2 right-2 bg-white/90 hover:bg-white p-1 rounded-full"
@@ -143,9 +136,7 @@ export default function ImageUpload({
         </div>
       )}
 
-      <p className="text-xs text-gray-500">
-        최대 {maxSizeMB}MB / JPG, PNG, GIF, WebP
-      </p>
+      <p className="text-xs text-gray-500">최대 {maxSizeMB}MB / JPG, PNG, GIF, WebP</p>
     </div>
   );
 }

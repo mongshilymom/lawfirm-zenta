@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import ImageUpload from "@/components/ImageUpload";
 
 export default function NewPostPage() {
@@ -125,23 +126,28 @@ export default function NewPostPage() {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             커버 이미지
           </label>
-          
+
           <ImageUpload
             onImageUploaded={(url) => setFormData({ ...formData, cover_image: url })}
             bucket="page-images"
           />
-          
+
           {formData.cover_image && (
             <div className="mt-3">
               <p className="text-xs text-gray-500 mb-2">현재 이미지:</p>
-              <img 
-                src={formData.cover_image} 
-                alt="Cover" 
-                className="w-full max-w-md h-auto rounded border"
-              />
+              {/* next/image로 최적화 */}
+              <div className="relative w-full max-w-md h-64 rounded border overflow-hidden">
+                <Image
+                  src={formData.cover_image}
+                  alt="Cover"
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 640px"
+                />
+              </div>
             </div>
           )}
-          
+
           <input
             type="url"
             value={formData.cover_image}
