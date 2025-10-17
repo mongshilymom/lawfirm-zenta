@@ -1,7 +1,7 @@
-# Template Law Firm Zenta
+# ZENTA Law Firm WebSite
 
 > 🏛️ **Dark Academia AI-First Law Firm Architecture**  
-> 500명 규모 로펌을 위한 프리미엄 디지털 경험 템플릿
+> Professional digital experience platform for modern law firms
 
 ## ⚡ 빠른 시작 (5분 설정)
 
@@ -46,7 +46,7 @@ npm run dev
 
 ### ✨ 구현 완료
 - ✅ Dark Academia UI 시스템 (Tailwind + Framer Motion)
-- ✅ 500명 변호사 디렉토리 (검색/필터링)
+- ✅ 변호사 디렉토리 (검색/필터링)
 - ✅ 3-Click 네비게이션 보장
 - ✅ Supabase 연동 (Postgres + Edge Functions)
 - ✅ 반응형 레이아웃 (모바일 최적화)
@@ -63,7 +63,7 @@ npm run dev
 ## 📁 프로젝트 구조
 
 ```
-template-lawfirm-zenta/
+zenta-lawfirm/
 ├── app/                    # Next.js 14 App Router
 │   ├── chat/              # AI 상담 페이지
 │   ├── layout.tsx         # 글로벌 레이아웃
@@ -137,7 +137,7 @@ npx wrangler pages deploy .next
 ## 📞 지원
 
 문제 발생 시:
-1. [GitHub Issues](https://github.com/your-org/template-lawfirm-zenta/issues)
+1. [GitHub Issues](https://github.com/mongshilymom/zenta-lawfirm/issues)
 2. [Supabase Discord](https://discord.supabase.com)
 3. [Next.js Docs](https://nextjs.org/docs)
 

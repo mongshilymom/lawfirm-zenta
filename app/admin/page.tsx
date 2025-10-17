@@ -1,100 +1,115 @@
-import { createServerSupabase } from "@/lib/supabase/server";
 import Link from "next/link";
-import type { Database } from "@/lib/supabase/types";
+import { redirect } from "next/navigation";
+import { createServerSupabase } from "@/lib/supabase/server";
+import { getAdminSession } from "@/lib/auth/session";
+import StatsDashboard from "@/components/admin/StatsDashboard";
 
-type Consultation = Database["public"]["Tables"]["consultations"]["Row"];
-
-async function getConsultations(): Promise<Consultation[]> {
-  const supabase = createServerSupabase();
-  const { data, error } = await supabase
-    .from("consultations")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(50);
-
-  if (error) {
-    console.error("Failed to load consultations:", error);
-    return [];
+export default async function AdminDashboard() {
+  // ✅ 인증 체크 - 로그인 안 되어 있으면 로그인 페이지로
+  const session = await getAdminSession();
+  if (!session) {
+    redirect("/admin/login");
   }
-  return (data as unknown as Consultation[]) || [];
-}
 
-export default async function AdminConsultationsPage() {
-  const consultations = await getConsultations();
+  const supabase = createServerSupabase();
+
+  // Get counts
+  const [lawyersRes, casesRes, faqsRes, contactsRes] = await Promise.all([
+    supabase.from("lawyers").select("id", { count: "exact", head: true }),
+    supabase.from("case_studies").select("id", { count: "exact", head: true }),
+    supabase.from("faqs").select("id", { count: "exact", head: true }),
+    supabase.from("consultations").select("id", { count: "exact", head: true }),
+  ]);
+
+  const stats = [
+    {
+      name: "Lawyers",
+      count: lawyersRes.count || 0,
+      href: "/admin/lawyers",
+      icon: "👔",
+      color: "bg-blue-500",
+    },
+    {
+      name: "Case Studies",
+      count: casesRes.count || 0,
+      href: "/admin/cases",
+      icon: "📋",
+      color: "bg-green-500",
+    },
+    {
+      name: "FAQs",
+      count: faqsRes.count || 0,
+      href: "/admin/faqs",
+      icon: "❓",
+      color: "bg-yellow-500",
+    },
+    {
+      name: "Consultations",
+      count: contactsRes.count || 0,
+      href: "/admin/consultations",
+      icon: "💬",
+      color: "bg-purple-500",
+    },
+  ];
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-parchment mb-2">상담 관리</h1>
-        <p className="text-slate-400">AI 챗 상담 신청 내역을 확인하고 관리합니다</p>
-      </header>
-
-      <div className="rounded-xl border border-slate-800 bg-slate-950/50 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-slate-900 border-b border-slate-800">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">이름</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">연락처</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">상담 분야</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">상태</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">신청일시</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-parchment">액션</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800">
-            {consultations.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-slate-400">
-                  아직 상담 신청 내역이 없습니다
-                </td>
-              </tr>
-            ) : (
-              consultations.map((consultation) => (
-                <tr key={consultation.id} className="hover:bg-slate-900/50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-parchment">{consultation.visitor_name || "-"}</td>
-                  <td className="px-6 py-4 text-sm text-slate-300">
-                    {consultation.visitor_email && <div>{consultation.visitor_email}</div>}
-                    {consultation.visitor_phone && <div className="text-slate-400">{consultation.visitor_phone}</div>}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-300">{consultation.legal_issue || "-"}</td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                      consultation.status === "active" ? "bg-green-500/10 text-green-500" :
-                      consultation.status === "assigned" ? "bg-blue-500/10 text-blue-500" :
-                      "bg-slate-500/10 text-slate-400"
-                    }`}>
-                      {consultation.status === "active" ? "진행중" : consultation.status === "assigned" ? "배정됨" : "완료"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-400">
-                    {new Date(consultation.created_at).toLocaleString("ko-KR")}
-                  </td>
-                  <td className="px-6 py-4">
-                    <Link
-                      href={`/admin/consultations/${consultation.id}` as any}
-                      className="text-amber-500 hover:text-amber-400 text-sm font-medium"
-                    >
-                      상세보기
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        <p className="mt-2 text-gray-600">Manage your law firm website content</p>
       </div>
 
-      <div className="mt-8 flex items-center justify-between">
-        <div className="text-sm text-slate-400">
-          총 {consultations.length}건의 상담 신청
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {stats.map((stat) => (
+          <Link
+            key={stat.name}
+            href={stat.href}
+            className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{stat.count}</p>
+              </div>
+              <div className={`${stat.color} text-white text-3xl p-3 rounded-full`}>
+                {stat.icon}
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* 📊 통계 대시보드 추가 */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">📊 통계 대시보드</h2>
+        <StatsDashboard />
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link
+            href="/admin/lawyers/new"
+            className="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            <span className="mr-2">➕</span> Add New Lawyer
+          </Link>
+          <Link
+            href="/admin/cases/new"
+            className="flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+          >
+            <span className="mr-2">➕</span> Add Case Study
+          </Link>
+          <Link
+            href="/admin/faqs/new"
+            className="flex items-center justify-center px-4 py-3 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors"
+          >
+            <span className="mr-2">➕</span> Add FAQ
+          </Link>
         </div>
-        <Link 
-          href="/"
-          className="text-amber-500 hover:text-amber-400 text-sm font-medium"
-        >
-          ← 홈으로 돌아가기
-        </Link>
       </div>
-    </main>
+    </div>
   );
 }

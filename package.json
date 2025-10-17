@@ -1,15 +1,20 @@
 {
-  "name": "template-lawfirm-arch",
+  "name": "zenta-lawfirm-website",
+  "version": "1.0.0",
+  "description": "ZENTA LawFirm WebSite - Premium AI-first law firm website solution - Commercial ready",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:demo": "cross-env DEMO_STATIC=true NEXT_PUBLIC_DEMO_MODE=true next build",
     "start": "next start",
     "lint": "next lint",
     "test:e2e": "playwright test",
     "setup": "tsx scripts/setup.ts",
     "seed": "tsx scripts/seed.ts",
-    "seed:force": "tsx scripts/seed.ts --force"
+    "seed:force": "tsx scripts/seed.ts --force",
+    "package": "node scripts/build-package.js",
+    "package:zip": "npm run build:demo && cd out && powershell -Command \"Compress-Archive -Path * -DestinationPath ../zenta_final.zip -Force\" && cd .."
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.65.0",
@@ -27,6 +32,7 @@
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "autoprefixer": "10.4.20",
+    "cross-env": "^10.1.0",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
     "postcss": "8.4.41",
