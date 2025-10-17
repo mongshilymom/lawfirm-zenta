@@ -110,7 +110,7 @@ export function LawyerDirectoryLayout({
             />
           </label>
           <label className="flex flex-col gap-2">
-            <span className="text-xs uppercase tracking-[0.3em] text-zinc-400">직급</span>
+            <span className="text-xs uppercase tracking-[0.3em] text-zinc-400">직책</span>
             <select
               value={filters.role || "all"}
               onChange={(e) => handleFilterChange({ role: e.target.value })}
@@ -193,7 +193,7 @@ export default function LawyerDirectory() {
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-brass/80">Lawyer Directory</p>
             <h2 className="mt-2 font-serif text-3xl text-parchment">
-              500명 전문팀을 위한 매거진형 탐색
+              로펌 네트워크 전용 매거진 플랫폼
             </h2>
           </div>
           <Link

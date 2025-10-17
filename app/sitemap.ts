@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import lawyers from "@/data/lawyers.json";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://youalta.net";
@@ -18,33 +19,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1.0 : 0.8
   }));
 
-  // Dynamic routes (lawyers) - only if not in demo mode
-  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+  // Dynamic routes (lawyers from JSON)
+  const publishedLawyers = lawyers.filter((l) => l.status === "published");
   
-  if (!isDemoMode) {
-    try {
-      const { createServerSupabase } = await import("@/lib/supabase/server");
-      const supabase = createServerSupabase();
-      
-      const { data: lawyers } = await supabase
-        .from("lawyers")
-        .select("id")
-        .eq("is_active", true);
-      
-      if (lawyers) {
-        const lawyerRoutes = lawyers.map((lawyer) => ({
-          url: `${baseUrl}/lawyers/${lawyer.id}`,
-          lastModified: new Date(),
-          changeFrequency: "monthly" as const,
-          priority: 0.6
-        }));
-        
-        routes.push(...lawyerRoutes);
-      }
-    } catch (error) {
-      console.log("Skipping dynamic routes in sitemap (demo mode or Supabase unavailable)");
-    }
-  }
+  const lawyerRoutes = publishedLawyers.map((lawyer) => ({
+    url: `${baseUrl}/lawyers/${lawyer.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7
+  }));
+  
+  routes.push(...lawyerRoutes);
 
   return routes;
 }

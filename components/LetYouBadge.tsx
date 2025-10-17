@@ -36,14 +36,16 @@ export default function LetYouBadge() {
             maxWidth:1200, margin:'0 auto',
             padding:'10px 16px calc(10px + env(safe-area-inset-bottom))',
             display:'flex', alignItems:'center', justifyContent:'space-between', gap:12,
-            background:'rgba(0,0,0,.85)', color:'#fff', fontSize:14,
-            backdropFilter:'saturate(180%) blur(6px)', borderTop:'1px solid rgba(255,255,255,.12)', borderRadius:10,
+            background:'transparent', color:'inherit', fontSize:14,
+            borderRadius:10,
+            // backdropFilter:'saturate(180%) blur(6px)',       // 제거
+            // borderTop:'1px solid rgba(255,255,255,.12)',     // 제거
           }}
         >
           {/* 좌측: 로고 + 안내문 */}
           <div style={{ display:'flex', alignItems:'center', gap:10, pointerEvents:'none' }}>
             <Image src="/brand/letyou-logo-48.png" alt="LetYou" width={24} height={24} sizes="24px" />
-            <span>이 페이지는 <strong>LetYou 홈제이지 포트폴리오</strong> 입니다</span>
+            <span>이 페이지는 <strong>LetYou 홈페이지 포트폴리오</strong> 입니다</span>
           </div>
 
           {/* 우측: 방문 버튼 + 닫기 버튼 */}
@@ -63,8 +65,8 @@ export default function LetYouBadge() {
             <button
               onClick={() => { setHidden(true); try { localStorage.setItem('letyouBadgeClosed','1'); } catch {} }}
               style={{
-                pointerEvents:'auto', background:'rgba(255,255,255,.12)', color:'#ddd',
-                width:36, height:36, borderRadius:999, border:'1px solid rgba(255,255,255,.25)',
+                pointerEvents:'auto', background:'rgba(0,0,0,.06)', color:'inherit',
+                width:36, height:36, borderRadius:999, border:'1px solid rgba(0,0,0,.12)',
                 display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:18, lineHeight:1,
               }}
               aria-label="배지 닫기"

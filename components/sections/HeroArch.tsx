@@ -81,10 +81,14 @@ export default function HeroArch() {
           className="relative z-10 flex max-w-3xl flex-col items-center gap-6"
         >
           <h1 className="text-balance font-serif text-4xl leading-tight text-parchment md:text-6xl">
-            Build Trust with <span className="text-brass">AI-First</span> Law Firm Architecture
+            성공을 위한 최적의 설계
           </h1>
           <p className="max-w-2xl text-pretty text-lg text-zinc-300 md:text-xl">
-            Premium digital experience connecting legal professionals and real-time insights in just 3 clicks. Ready to customize for your law firm.
+            <span
+  className="block w-full font-medium leading-relaxed text-center break-keep whitespace-normal"
+>        
+            500명 전문 변호사와 최신 법률 정보를 단 3번의 클릭으로 연결하는 프리미엄 서비스 
+            </span>
           </p>
           
           <div className="flex flex-wrap items-center justify-center gap-4">
@@ -98,7 +102,7 @@ export default function HeroArch() {
               href="#directory"
               className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl border border-brass/40 px-6 py-3 font-medium text-brass transition-colors duration-200 hover:border-brass hover:text-parchment focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass/60"
             >
-              Find Attorney
+              변호사 직접 찾기
             </Link>
             <Link
               href="/chat"
@@ -109,7 +113,7 @@ export default function HeroArch() {
           </div>
 
           <p className="mt-4 text-xs text-zinc-500">
-            ⚡ Average 2-hour response • Free consultation
+             평균 2시간 내 연락 • 상담료 무료
           </p>
         </motion.div>
       </section>

@@ -51,21 +51,15 @@ export default async function PostsPage() {
                 <tr key={post.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">{post.title}</div>
-                    <div className="text-sm text-gray-500">{post.excerpt?.substring(0, 100)}...</div>
+                    <div className="text-sm text-gray-500">{post.body?.substring(0, 100)}...</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      post.status === "published" 
-                        ? "bg-green-100 text-green-800"
-                        : post.status === "draft"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}>
-                      {post.status}
+                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                      게시됨
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(post.created_at).toLocaleDateString("ko-KR")}
+                    {new Date(post.published_at || Date.now()).toLocaleDateString("ko-KR")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <Link
