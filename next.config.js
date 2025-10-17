@@ -4,7 +4,7 @@ const isDemo = process.env.DEMO_STATIC === "true";
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    typedRoutes: true
+    typedRoutes: false
   },
   images: {
     remotePatterns: [
