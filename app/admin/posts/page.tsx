@@ -6,7 +6,7 @@ export default async function PostsPage() {
 
   // 포스트 목록 가져오기
   const { data: posts, error } = await supabase
-    .from("posts")
+    .from("insights")
     .select("*")
     .order("created_at", { ascending: false });
 
