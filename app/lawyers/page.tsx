@@ -1,6 +1,9 @@
 import lawyers from "@/data/lawyers.json";
 import LawyersListClient from "@/components/lawyers/LawyersListClient";
 
+// useSearchParams() 사용으로 인한 정적 생성 방지
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "변호사 소개 | Zenta Law",
   description: "ZENTA Law의 전문 변호사진을 만나보세요. 각 분야 최고의 법률 전문가들이 귀하의 법률 문제를 해결해 드립니다.",
