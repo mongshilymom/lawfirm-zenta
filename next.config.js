@@ -15,6 +15,13 @@ const nextConfig = {
       }
     ],
     unoptimized: isDemo // Disable image optimization for static export
+  },
+  async redirects() {
+    return [
+      { source: '/our-team', destination: '/lawyers', permanent: true },
+      { source: '/team', destination: '/lawyers', permanent: true },
+      { source: '/attorneys', destination: '/lawyers', permanent: true }
+    ];
   }
 };
 

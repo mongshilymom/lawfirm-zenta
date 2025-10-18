@@ -326,7 +326,7 @@ export default function LawyerDetailPage({
                     href="/contact"
                     className="block w-full rounded-xl border-2 border-brass py-4 text-center font-bold text-brass transition-all hover:bg-brass hover:text-ink"
                   >
-                    전통 상담 신청
+                    변호사 상담 예약
                   </Link>
                 </div>
                 <p className="mt-6 text-center text-sm text-parchment/60">

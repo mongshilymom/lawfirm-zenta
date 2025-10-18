@@ -67,9 +67,6 @@ export default function HeroArch() {
         <header className="absolute inset-x-6 top-6 flex items-center justify-between text-sm text-zinc-400">
           <span className="font-sans uppercase tracking-[0.3em]">Design for Trust</span>
           <nav className="flex items-center gap-6">
-            <Link href="#directory" className="hidden text-xs uppercase tracking-[0.2em] md:inline">
-              Find Attorney
-            </Link>
             <Link href="/chat" className="text-xs uppercase tracking-[0.2em]">
               AI Consultation
             </Link>
@@ -87,7 +84,7 @@ export default function HeroArch() {
             <span
   className="block w-full font-medium leading-relaxed text-center break-keep whitespace-normal"
 >        
-            500명 전문 변호사와 최신 법률 정보를 단 3번의 클릭으로 연결하는 프리미엄 서비스 
+            500명 전문 변호사와 3번의 클릭으로 연결 
             </span>
           </p>
           
@@ -96,19 +93,13 @@ export default function HeroArch() {
               onClick={() => setShowQuickContact(true)}
               className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl bg-brass px-8 py-3 font-medium text-obsidian transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-brass/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass/60"
             >
-              ⚡ Quick Consultation
+                AI Consultation
             </button>
-            <Link
-              href="#directory"
-              className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl border border-brass/40 px-6 py-3 font-medium text-brass transition-colors duration-200 hover:border-brass hover:text-parchment focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass/60"
-            >
-              변호사 직접 찾기
-            </Link>
             <Link
               href="/chat"
               className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl border border-zinc-700 px-6 py-3 font-medium text-zinc-400 transition-colors duration-200 hover:border-zinc-600 hover:text-zinc-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
             >
-              AI Consultation
+              Quick Consultation
             </Link>
           </div>
 

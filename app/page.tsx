@@ -1,6 +1,8 @@
 import HeroArch from "@/components/sections/HeroArch";
-import LawyerDirectory from "@/components/layouts/LawyerDirectory";
+import DirectorySearch from "@/components/sections/DirectorySearch";
+import LawyerPreviewRow from "@/components/sections/LawyerPreviewRow";
 import JsonLd from "@/components/seo/JsonLd";
+import lawyers from "@/data/lawyers.json";
 
 // ✅ 홈 탭 제목을 명시적으로 지정
 export const metadata = {
@@ -20,12 +22,16 @@ export default function HomePage() {
     priceRange: "$$$",
   };
 
+  // published 상태인 변호사만 필터링
+  const publishedLawyers = lawyers.filter((l) => l.status === "published");
+
   return (
     <>
       <JsonLd data={organizationSchema} />
-      <main className="flex flex-1 flex-col gap-16 py-16">
+      <main className="flex flex-1 flex-col gap-0 py-16">
         <HeroArch />
-        <LawyerDirectory />
+        <DirectorySearch lawyers={publishedLawyers as any} />
+        <LawyerPreviewRow />
       </main>
     </>
   );

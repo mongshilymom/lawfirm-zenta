@@ -58,7 +58,7 @@ export default function Header() {
               href="/lawyers" 
               className="text-parchment hover:text-amber-500 transition-colors"
             >
-              Our Team
+              변호사
             </Link>
           </li>
           <li>
@@ -138,7 +138,7 @@ export default function Header() {
                 onClick={() => setMenuOpen(false)}
                 className="block text-parchment hover:text-amber-500 transition-colors"
               >
-                Our Team
+                변호사
               </Link>
             </li>
             <li>
