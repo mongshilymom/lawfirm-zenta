@@ -50,7 +50,7 @@ export default function Header() {
               href="/" 
               className="text-parchment hover:text-amber-500 transition-colors"
             >
-              Home
+              ZENTA
             </Link>
           </li>
           <li>

@@ -6,7 +6,7 @@ import lawyers from "@/data/lawyers.json";
 
 // ✅ 홈 탭 제목을 명시적으로 지정
 export const metadata = {
-  title: "Home",
+  title: "LetYou - ZENTA 법률서비스 웹솔루션",
 };
 
 export default function HomePage() {
