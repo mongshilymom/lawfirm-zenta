@@ -5,7 +5,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://youalta.net";
   
   // Static routes
-  const routes = [
+  const routes: MetadataRoute.Sitemap = [
     "",
     "/lawyers",
     "/chat",
