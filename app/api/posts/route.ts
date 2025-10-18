@@ -2,16 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminSupabase } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/auth/session";
 
-// 포스트 목록 조회
+// 뉴스 기사 목록 조회 (news_articles 테이블 사용)
 export async function GET() {
   try {
     await requireAdmin();
     const supabase = createAdminSupabase();
 
     const { data, error } = await supabase
-      .from("posts")
+      .from("news_articles")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("published_at", { ascending: false });
 
     if (error) throw error;
 
@@ -24,40 +24,32 @@ export async function GET() {
   }
 }
 
-// 새 포스트 생성
+// 새 뉴스 기사 생성 (news_articles 테이블에 맞게 수정)
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAdmin();
+    await requireAdmin();
     const body = await request.json();
 
-    const { title, slug, excerpt, content, status, cover_image } = body;
+    const { headline, slug, body: articleBody, author, source_url } = body;
 
-    if (!title || !slug) {
+    if (!headline) {
       return NextResponse.json(
-        { error: "제목과 Slug는 필수입니다" },
+        { error: "제목(headline)은 필수입니다" },
         { status: 400 }
       );
     }
 
     const supabase = createAdminSupabase();
 
-    // 컨텐츠를 JSON 형식으로 저장
-    const contentJson = {
-      type: "markdown",
-      value: content || "",
-    };
-
     const { data, error } = await supabase
-      .from("posts")
+      .from("news_articles")
       .insert({
-        title,
-        slug,
-        excerpt,
-        content: contentJson,
-        status: status || "draft",
-        cover_image,
-        author_id: session.userId,
-        published_at: status === "published" ? new Date().toISOString() : null,
+        headline,
+        slug: slug || null,
+        body: articleBody || null,
+        author: author || null,
+        source_url: source_url || null,
+        published_at: new Date().toISOString(),
       })
       .select()
       .single();
