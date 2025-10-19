@@ -93,13 +93,13 @@ export default function HeroArch() {
               onClick={() => setShowQuickContact(true)}
               className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl bg-brass px-8 py-3 font-medium text-obsidian transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-brass/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass/60"
             >
-                AI Consultation
+                Quick Consultation
             </button>
             <Link
               href="/chat"
               className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl border border-zinc-700 px-6 py-3 font-medium text-zinc-400 transition-colors duration-200 hover:border-zinc-600 hover:text-zinc-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-600"
             >
-              Quick Consultation
+              AI Consultation
             </Link>
           </div>
 
